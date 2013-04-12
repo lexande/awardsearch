@@ -38,6 +38,7 @@ def getdests(code):
       if splitline[0] in staralliance:
         if splitline[2] not in dests:
           dests.append(splitline[2])
+  routes.close()
   return dests
 
 def printflights(list):
