@@ -10,11 +10,14 @@ from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 import pickle
 import copy
 
-accountnum = "xxxxxxxxx"
-password = "xxxx"
-
 class RequestHandler(SimpleXMLRPCRequestHandler):
     rpc_paths = ('/RPC2',)
+
+def readConf():
+  conf = open("awardsearch.conf")
+  accountnum = re.match("Account number: (.*)\n",conf.readline()).group(1)
+  password = re.match("Password: (.*)\n",conf.readline()).group(1)
+  return (accountnum, password)
 
 def datetimeFromContents(indate,tdcontents,weekday):
   intime = datetime.datetime.strptime(tdcontents[0],"%H:%M").time()
@@ -102,8 +105,9 @@ br.set_handle_refresh(False)  # can sometimes hang without this
 br.addheaders = [('User-agent', 'Lynx/2.8.7pre.5 libwww-FM/2.14 SSL-MM/1.4.1')]
 br.open("https://aswbe-i.ana.co.jp/p_per/sky_ip_per_jp/preAwdSearchLogin.do?LANG=en")
 br.select_form("loginForm")
-br["cardNo"] = accountnum
-br["password"] = password
+conf = readConf()
+br["cardNo"] = conf[0]
+br["password"] = conf[1]
 br.submit()
 
 server = SimpleXMLRPCServer(("localhost", 8000))
